@@ -347,11 +347,12 @@ module InheritedResources
               engine.isolated?
             elsif (engine = "#{namespace}/engine".camelize.constantize).respond_to?(:isolated?)
               engine.isolated?
+            else
+              false
             end
           rescue
             false
           end
-          false
         end
 
         config[:route_prefix] = namespaces.join('_') unless namespaces.empty?
