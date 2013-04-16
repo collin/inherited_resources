@@ -339,6 +339,21 @@ module InheritedResources
 
         # Deal with namespaced controllers
         namespaces = self.controller_path.split('/')[0..-2]
+
+        # Deal with isolated namespaces
+        namespaces.delete_if do |namespace|
+          begin
+            if (engine = namespace.camelize.constantize).respond_to?(:isolated?)
+              engine.isolated?
+            elsif (engine = "#{namespace}/engine".camelize.constantize).respond_to?(:isolated?)
+              engine.isolated?
+            end
+          rescue
+            false
+          end
+          false
+        end
+
         config[:route_prefix] = namespaces.join('_') unless namespaces.empty?
 
         # Deal with default request parameters in namespaced controllers, e.g.
